@@ -30,12 +30,17 @@ func GetObjectType(object interface{}) (typ reflect.Type, ok bool) {
 			typ = IndirectType(reflectType.Out(0))
 			ok = true
 		}
-	} else if typKind == reflect.Struct && typName == "Method" {
-		method := object.(reflect.Method)
-		methodTyp := method.Func.Type()
-		numOut := methodTyp.NumOut()
-		if numOut > 0 {
-			typ = IndirectType(methodTyp.Out(0))
+	} else if typKind == reflect.Struct {
+		if typName == "Method" {
+			method := object.(reflect.Method)
+			methodTyp := method.Func.Type()
+			numOut := methodTyp.NumOut()
+			if numOut > 0 {
+				typ = IndirectType(methodTyp.Out(0))
+				ok = true
+			}
+		} else {
+			typ = reflect.TypeOf(object)
 			ok = true
 		}
 	} else {
